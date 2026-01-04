@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小红书舆情分析系统</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.7/dist/iconify-icon.min.js"></script>
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background-color: #0f172a;
+      overflow-x: hidden;
+    }
+    #canvas-container {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: blur(5px);
+    }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+  </style>
+</head>
+
+<body class="text-white antialiased selection:bg-amber-500/30">
+
+  <!-- 3D Scene Container (Fixed Background) -->
+  <div id="canvas-container"></div>
+
+  <!-- Navigation (Fixed) -->
+  <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/5 backdrop-blur-md transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
+        <div class="w-4 h-4 rounded-full bg-gradient-to-tr from-amber-200 to-amber-500"></div>
+        <div class="text-sm font-medium tracking-tight uppercase opacity-90">计科2307-4组</div>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-8 text-xs font-medium text-white/70">
+        <a href="#features" class="hover:text-white transition-colors duration-200">核心能力</a>
+        <a href="#technology" class="hover:text-white transition-colors duration-200">指标概览</a>
+        <a href="#manifesto" class="hover:text-white transition-colors duration-200">系统说明</a>
+      </nav>
+
+      <div class="flex items-center gap-4">
+        <a href="#" class="hidden md:block text-xs font-medium text-white/70 hover:text-white transition-colors">控制台</a>
+        <button class="px-3 py-1.5 rounded-full bg-white text-black text-xs font-medium hover:bg-gray-200 transition-colors duration-200 shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+          开始分析
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Scrollable Content -->
+  <div class="relative z-10 w-full">
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center items-start px-6 md:px-12 max-w-7xl mx-auto pt-20">
+      <div class="reveal inline-flex items-center gap-2 px-3 py-1 mb-8 text-xs font-medium text-amber-200/90 bg-amber-500/10 border border-amber-500/20 rounded-full backdrop-blur-sm">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-400"></span>
+        </span>
+        <span class="tracking-wide">v1.0 现已上线 · 立场识别 + 情绪演化</span>
+      </div>
+
+      <h1 class="reveal delay-100 text-5xl md:text-8xl font-medium tracking-tighter mb-8 leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white to-white/50">
+        立场洞察<br>情绪演化。
+      </h1>
+
+      <p class="reveal delay-200 text-lg md:text-xl text-white/60 font-normal leading-relaxed max-w-lg mb-12 tracking-wide">
+        面向小红书评论的舆情分析系统：自动识别支持/反对/中立立场，量化情绪强度，并追踪舆论随时间与地区的变化。
+      </p>
+
+      <div class="reveal delay-300 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+        <a href="/show"
+          class="group flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-black bg-white rounded-full hover:bg-gray-100 transition-all duration-200">
+            进入可视化
+            <iconify-icon icon="lucide:arrow-right"
+              class="transition-transform group-hover:translate-x-1"
+              width="16"
+              stroke-width="1.5"></iconify-icon>
+        </a>
+
+        
+        <button class="flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium text-white bg-white/5 border border-white/10 rounded-full backdrop-blur-md hover:bg-white/10 transition-all duration-200">
+          <iconify-icon icon="lucide:copy" width="16" stroke-width="1.5"></iconify-icon>
+          <span class="font-mono opacity-80">小组成员：李晨聪，夏乘风，刘奕康</span>
+        </button>
+      </div>
+
+      <!-- Scroll Indicator -->
+      <div class="absolute bottom-12 left-6 md:left-12 flex items-center gap-3 text-xs text-white/40 font-medium animate-pulse">
+        <iconify-icon icon="lucide:mouse-pointer-2" width="14" stroke-width="1.5"></iconify-icon>
+        向下滚动查看系统能力与指标
+      </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-32 px-6 border-t border-white/5 bg-gradient-to-b from-transparent to-black/20 backdrop-blur-[2px]">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+          <div class="reveal">
+            <h2 class="text-3xl font-medium tracking-tight mb-4">核心能力</h2>
+            <p class="text-white/50 max-w-md text-sm leading-relaxed">
+              从评论文本中抽取“立场 × 情绪 × 主题 × 地区 × 时间”的结构化信号，为舆情研判提供可解释、可追踪的证据链。
+            </p>
+          </div>
+          <div class="text-right hidden md:block reveal delay-100">
+            <div class="text-xs text-white/30 font-mono mb-1">小红书</div>
+            <div class="text-xl text-emerald-400 font-mono">&lt; 实时分析</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Card 1 -->
+          <div class="reveal delay-100 p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors duration-300 group">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-6 text-white group-hover:bg-white group-hover:text-black transition-all duration-300">
+              <iconify-icon icon="lucide:scale" width="20" stroke-width="1.5"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-medium mb-2 tracking-tight">立场识别</h3>
+            <p class="text-sm text-white/50 leading-relaxed">
+              对每条评论判别支持/反对/中立，并输出置信度分数，适用于争议话题的观点结构分析与极化监测。
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="reveal delay-200 p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors duration-300 group">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-6 text-white group-hover:bg-white group-hover:text-black transition-all duration-300">
+              <iconify-icon icon="lucide:activity" width="20" stroke-width="1.5"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-medium mb-2 tracking-tight">情绪量化</h3>
+            <p class="text-sm text-white/50 leading-relaxed">
+              提取情绪极性与强度，识别情绪爆发点与负面聚集区，辅助预警与事件响应策略制定。
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="reveal delay-300 p-8 rounded-3xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors duration-300 group">
+            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-6 text-white group-hover:bg-white group-hover:text-black transition-all duration-300">
+              <iconify-icon icon="lucide:map" width="20" stroke-width="1.5"></iconify-icon>
+            </div>
+            <h3 class="text-lg font-medium mb-2 tracking-tight">演化与地区</h3>
+            <p class="text-sm text-white/50 leading-relaxed">
+              按时间与 IP 地区聚合统计，追踪舆情热度、观点迁移与区域差异，输出可视化与报表结果。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Large Quote / Break -->
+    <section id="manifesto" class="py-40 px-6 border-t border-white/5 bg-black/40 backdrop-blur-lg">
+      <div class="max-w-4xl mx-auto text-center reveal">
+        <iconify-icon icon="lucide:quote" class="text-white/20 mb-8" width="32" stroke-width="1.5"></iconify-icon>
+        <h2 class="text-3xl md:text-5xl font-medium tracking-tight leading-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40">
+          “舆情不是情绪的噪声，而是观点的结构。我们把海量评论压缩成可解释的社会信号。”
+        </h2>
+        <div class="mt-12 flex items-center justify-center gap-4 reveal delay-200">
+          <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold">YK</div>
+          <div class="text-left">
+            <div class="text-sm font-medium text-white">刘奕康</div>
+            <div class="text-xs text-white/40">作者 · 小红书舆情立场分析系统</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="technology" class="py-24 px-6 border-t border-white/5 bg-black/60">
+      <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="flex flex-col gap-2 reveal delay-100">
+          <span class="text-4xl font-medium tracking-tight">多维</span>
+          <span class="text-xs font-medium uppercase text-white/40 tracking-wider">立场 / 情绪 / 地区 / 时间</span>
+        </div>
+        <div class="flex flex-col gap-2 reveal delay-200">
+          <span class="text-4xl font-medium tracking-tight">批处理</span>
+          <span class="text-xs font-medium uppercase text-white/40 tracking-wider">CSV 输入 / 结果导出</span>
+        </div>
+        <div class="flex flex-col gap-2 reveal delay-300">
+          <span class="text-4xl font-medium tracking-tight">可解释</span>
+          <span class="text-xs font-medium uppercase text-white/40 tracking-wider">置信度 / 分布统计</span>
+        </div>
+        <div class="flex flex-col gap-2 reveal delay-100">
+          <span class="text-4xl font-medium tracking-tight">可扩展</span>
+          <span class="text-xs font-medium uppercase text-white/40 tracking-wider">模型替换 / 管线升级</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 border-t border-white/5 bg-black relative overflow-hidden">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-amber-500/10 blur-[100px] rounded-full pointer-events-none opacity-50"></div>
+
+      <div class="max-w-7xl mx-auto relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-12 mb-20 reveal">
+          <div class="col-span-1 md:col-span-2 flex flex-col gap-4">
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 rounded-full bg-gradient-to-tr from-amber-200 to-amber-500"></div>
+              <span class="text-lg font-medium tracking-tight">XHS Opinion</span>
+            </div>
+            <p class="text-sm text-white/40 max-w-xs leading-relaxed">
+              面向小红书评论的立场识别与舆情演化分析。用于科研与教学展示，可扩展为可视化监测平台。
+            </p>
+            <div class="flex gap-4 mt-4">
+              <a href="#" class="text-white/40 hover:text-white transition-colors"><iconify-icon icon="lucide:twitter" width="18"></iconify-icon></a>
+              <a href="#" class="text-white/40 hover:text-white transition-colors"><iconify-icon icon="lucide:github" width="18"></iconify-icon></a>
+              <a href="#" class="text-white/40 hover:text-white transition-colors"><iconify-icon icon="lucide:disc" width="18"></iconify-icon></a>
+            </div>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-medium text-white mb-4">功能</h4>
+            <ul class="space-y-3 text-sm text-white/40">
+              <li><a href="#features" class="hover:text-white transition-colors">立场识别</a></li>
+              <li><a href="#features" class="hover:text-white transition-colors">情绪量化</a></li>
+              <li><a href="#technology" class="hover:text-white transition-colors">统计指标</a></li>
+              <li><a href="#manifesto" class="hover:text-white transition-colors">系统说明</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-medium text-white mb-4">数据</h4>
+            <ul class="space-y-3 text-sm text-white/40">
+              <li><a href="#" class="hover:text-white transition-colors">评论采集</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">清洗规范</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">字段定义</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">导出格式</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-medium text-white mb-4">合规</h4>
+            <ul class="space-y-3 text-sm text-white/40">
+              <li><a href="#" class="hover:text-white transition-colors">隐私保护</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">仅限研究</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">数据脱敏</a></li>
+              <li><a href="#" class="hover:text-white transition-colors">使用条款</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-medium text-white mb-4">运行状态</h4>
+            <div class="flex items-center gap-2 text-sm text-emerald-400">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+              </span>
+              模型与服务运行正常
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-white/20 reveal delay-100">
+          <p>© 2026 XHS Opinion. 仅用于学习与科研展示。</p>
+          <p>Built with <iconify-icon icon="lucide:heart" class="inline align-middle mx-1" width="10"></iconify-icon> and a suspicious amount of coffee.</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Hidden slider input for JS logic compatibility -->
+  <input type="range" id="timeSlider" min="0" max="100" value="15" class="hidden">
+
+  <!-- Logic -->
+  <script>
+    // --- Intersection Observer for Animations ---
+    const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('active');
+      });
+    }, observerOptions);
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // --- Three.js Scene Setup ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    const fogColor = new THREE.Color(0x4a4e69);
+    scene.fog = new THREE.FogExp2(fogColor, 0.005);
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 5, 20);
+    camera.lookAt(0, 2, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    container.appendChild(renderer.domElement);
+
+    // 1. Water
+    const waterGeometry = new THREE.PlaneGeometry(300, 300, 128, 128);
+    const waterMaterial = new THREE.MeshStandardMaterial({
+      color: 0x006994,
+      roughness: 0.1,
+      metalness: 0.6,
+      flatShading: false,
+      transparent: true,
+      opacity: 0.9,
+      side: THREE.DoubleSide
+    });
+    const water = new THREE.Mesh(waterGeometry, waterMaterial);
+    water.rotation.x = -Math.PI / 2;
+    water.receiveShadow = true;
+    scene.add(water);
+
+    // 2. Sand
+    const sandGeometry = new THREE.PlaneGeometry(300, 50, 64, 64);
+    const sandMaterial = new THREE.MeshStandardMaterial({
+      color: 0xE6C288,
+      roughness: 0.8,
+      metalness: 0.1
+    });
+    const sand = new THREE.Mesh(sandGeometry, sandMaterial);
+    sand.rotation.x = -Math.PI / 2;
+    sand.position.z = 80;
+    sand.position.y = -0.5;
+    sand.rotation.z = 0.05;
+    const sandPos = sand.geometry.attributes.position;
+    for (let i = 0; i < sandPos.count; i++) {
+      const z = sandPos.getZ(i);
+      sandPos.setZ(i, z + Math.random() * 0.5);
+    }
+    sand.geometry.computeVertexNormals();
+    scene.add(sand);
+
+    // 3. Sun
+    const sunGeometry = new THREE.SphereGeometry(15, 32, 32);
+    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa33 });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    scene.add(sun);
+
+    // --- Lights ---
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffaa33, 1.5);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    scene.add(sunLight);
+
+    const fillLight = new THREE.PointLight(0x0044ff, 0.5, 100);
+    fillLight.position.set(0, 10, 10);
+    scene.add(fillLight);
+
+    // --- Animation State ---
+    let time = 0;
+    const waterVertices = waterGeometry.attributes.position;
+    const initialWaterZ = [];
+    for (let i = 0; i < waterVertices.count; i++) initialWaterZ.push(waterVertices.getZ(i));
+
+    // --- Logic: Map Scroll to Sunset ---
+    function updateSunPosition(value) {
+      const sliderVal = parseFloat(value);
+      const elevation = (sliderVal / 100) * 30 - 5;
+      const xPos = 0, zPos = -100, yPos = elevation;
+
+      sun.position.set(xPos, yPos, zPos);
+      sunLight.position.set(xPos, yPos, zPos - 20);
+
+      const t = Math.max(0, Math.min(1, (sliderVal) / 100));
+      const colorDay = new THREE.Color(0x87CEEB);
+      const colorSunset = new THREE.Color(0xFD5E53);
+      const colorNight = new THREE.Color(0x0f172a);
+
+      let skyColor;
+      if (t > 0.5) {
+        skyColor = colorSunset.clone().lerp(colorDay, (t - 0.5) * 2);
+        sunMaterial.color.setHex(0xffaa33);
+        sunLight.color.setHex(0xffaa33);
+        sunLight.intensity = 1.5;
+      } else {
+        skyColor = colorNight.clone().lerp(colorSunset, t * 2);
+        sunMaterial.color.setHex(0xff4500);
+        sunLight.color.setHex(0xff4500);
+        sunLight.intensity = 0.5 + t;
+      }
+
+      scene.background = skyColor;
+      scene.fog.color.copy(skyColor);
+      waterMaterial.color.lerpColors(new THREE.Color(0x001133), new THREE.Color(0x006994), t);
+    }
+
+    window.addEventListener('scroll', () => {
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const scrollTop = window.scrollY;
+      const scrollPercent = Math.max(0, Math.min(1, scrollTop / docHeight));
+      const val = 40 - (scrollPercent * 40);
+      updateSunPosition(val);
+    });
+
+    updateSunPosition(40);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      time += 0.005;
+
+      for (let i = 0; i < waterVertices.count; i++) {
+        const x = waterVertices.getX(i);
+        const y = waterVertices.getY(i);
+
+        const wave1 = Math.sin(x * 0.1 + time) * 1.5;
+        const wave2 = Math.cos(y * 0.1 + time * 0.8) * 1.5;
+        const wave3 = Math.sin((x + y) * 0.05 + time * 0.5) * 1.0;
+
+        waterVertices.setZ(i, initialWaterZ[i] + wave1 + wave2 + wave3);
+      }
+      waterVertices.needsUpdate = true;
+      waterGeometry.computeVertexNormals();
+
+      camera.position.x = Math.sin(time * 0.1) * 1;
+      camera.lookAt(0, 2, 0);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+</body>
+</html>
